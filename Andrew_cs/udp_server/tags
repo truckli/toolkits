@@ -1,0 +1,110 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+APPS	makefile	/^APPS=client server$/;"	m
+BUFLEN	client.cpp	28;"	d	file:
+BUFLEN	server.cpp	288;"	d	file:
+BandwidthTracker	server.cpp	/^    BandwidthTracker(size_t nrecs_max = 100, uint32_t sample_diff_sec = 1, size_t nflow = 1): $/;"	f	class:BandwidthTracker	access:public	signature:(size_t nrecs_max = 100, uint32_t sample_diff_sec = 1, size_t nflow = 1)
+BandwidthTracker	server.cpp	/^class BandwidthTracker$/;"	c	file:
+BandwidthTracker::BandwidthTracker	server.cpp	/^    BandwidthTracker(size_t nrecs_max = 100, uint32_t sample_diff_sec = 1, size_t nflow = 1): $/;"	f	class:BandwidthTracker	access:public	signature:(size_t nrecs_max = 100, uint32_t sample_diff_sec = 1, size_t nflow = 1)
+BandwidthTracker::DataDrop	server.cpp	/^    class DataDrop$/;"	c	class:BandwidthTracker	file:	access:private
+BandwidthTracker::DataDrop::flow_id	server.cpp	/^	uint32_t flow_id;$/;"	m	class:BandwidthTracker::DataDrop	file:	access:private
+BandwidthTracker::DataDrop::nbytes	server.cpp	/^	uint32_t nbytes;$/;"	m	class:BandwidthTracker::DataDrop	file:	access:private
+BandwidthTracker::DataDrop::record_usec	server.cpp	/^	uint64_t record_usec;$/;"	m	class:BandwidthTracker::DataDrop	file:	access:private
+BandwidthTracker::DataDrop::set_paras	server.cpp	/^	void set_paras(uint32_t flow, uint64_t usec, uint32_t bytes)$/;"	f	class:BandwidthTracker::DataDrop	access:public	signature:(uint32_t flow, uint64_t usec, uint32_t bytes)
+BandwidthTracker::addBytes	server.cpp	/^    void addBytes(uint32_t flow, uint32_t nbytes)$/;"	f	class:BandwidthTracker	access:public	signature:(uint32_t flow, uint32_t nbytes)
+BandwidthTracker::add_drop	server.cpp	/^    void add_drop(uint32_t flow, uint64_t usec, uint32_t nbytes)$/;"	f	class:BandwidthTracker	file:	access:private	signature:(uint32_t flow, uint64_t usec, uint32_t nbytes)
+BandwidthTracker::book_keeping	server.cpp	/^    void book_keeping()$/;"	f	class:BandwidthTracker	access:public	signature:()
+BandwidthTracker::drops	server.cpp	/^    std::vector<DataDrop> drops;$/;"	m	class:BandwidthTracker	file:	access:private
+BandwidthTracker::fire_usec	server.cpp	/^    uint64_t fire_usec;$/;"	m	class:BandwidthTracker	file:	access:private
+BandwidthTracker::fired	server.cpp	/^    bool fired;$/;"	m	class:BandwidthTracker	file:	access:private
+BandwidthTracker::get_avg_mbps_all	server.cpp	/^    double get_avg_mbps_all() const$/;"	f	class:BandwidthTracker	file:	access:private	signature:() const
+BandwidthTracker::it	server.cpp	/^    std::vector<DataDrop>::iterator it;$/;"	m	class:BandwidthTracker	file:	access:private
+BandwidthTracker::lock	server.cpp	/^    pthread_rwlock_t lock;$/;"	m	class:BandwidthTracker	file:	access:private
+BandwidthTracker::lockread	server.cpp	/^    void lockread()$/;"	f	class:BandwidthTracker	file:	access:private	signature:()
+BandwidthTracker::lockwrite	server.cpp	/^    void lockwrite()$/;"	f	class:BandwidthTracker	file:	access:private	signature:()
+BandwidthTracker::nbytes_flow	server.cpp	/^    std::vector<uint64_t>nbytes_flow;$/;"	m	class:BandwidthTracker	file:	access:private
+BandwidthTracker::nbytes_flow_unrecorded	server.cpp	/^    std::vector<uint64_t>nbytes_flow_unrecorded;$/;"	m	class:BandwidthTracker	file:	access:private
+BandwidthTracker::nbytes_total	server.cpp	/^    uint64_t nbytes_total;$/;"	m	class:BandwidthTracker	file:	access:private
+BandwidthTracker::nflows	server.cpp	/^    uint32_t nflows;$/;"	m	class:BandwidthTracker	file:	access:private
+BandwidthTracker::nrecs	server.cpp	/^    uint32_t nrecs; \/\/number of records currently kept$/;"	m	class:BandwidthTracker	file:	access:private
+BandwidthTracker::nrecs_max	server.cpp	/^    uint32_t nrecs_max;$/;"	m	class:BandwidthTracker	file:	access:private
+BandwidthTracker::report_info	server.cpp	/^    void report_info()$/;"	f	class:BandwidthTracker	access:public	signature:()
+BandwidthTracker::sample_diff_sec	server.cpp	/^    uint32_t sample_diff_sec;$/;"	m	class:BandwidthTracker	file:	access:private
+BandwidthTracker::start_timing	server.cpp	/^    void start_timing()$/;"	f	class:BandwidthTracker	file:	access:private	signature:()
+BandwidthTracker::unlock	server.cpp	/^    void unlock()$/;"	f	class:BandwidthTracker	file:	access:private	signature:()
+BandwidthTracker::update_usec	server.cpp	/^    uint64_t update_usec; \/\/time of last record keeping event$/;"	m	class:BandwidthTracker	file:	access:private
+BandwidthTracker::~BandwidthTracker	server.cpp	/^    virtual ~BandwidthTracker() {}$/;"	f	class:BandwidthTracker	access:public	signature:()
+CC	makefile	/^CC=g++$/;"	m
+CFLAGS	makefile	/^CFLAGS=-g -DZ_DEBUG_PRTVAR -I $(TOOLKIT)\/mzcxx\/include$/;"	m
+DataDrop	server.cpp	/^    class DataDrop$/;"	c	class:BandwidthTracker	file:	access:private
+LDFLAGS	makefile	/^LDFLAGS=-L $(TOOLKIT)\/mzcxx\/lib -pthread$/;"	m
+SERVER_IP	udp-config.h	6;"	d
+SERVER_PORT_COUNT	udp-config.h	5;"	d
+SERVER_PORT_START	udp-config.h	4;"	d
+SocketUtils	server.cpp	/^class SocketUtils$/;"	c	file:
+SocketUtils::bindUdp	server.cpp	/^	static void bindUdp(vector<int>::iterator it, uint32_t ip, uint16_t port)$/;"	f	class:SocketUtils	access:public	signature:(vector<int>::iterator it, uint32_t ip, uint16_t port)
+TOOLKIT	makefile	/^TOOLKIT:=~\/Coding\/Toolkit$/;"	m
+TimeSus	server.cpp	/^    TimeSus(uint32_t sec, uint32_t usec):tv_sec(sec), tv_usec(usec) {}$/;"	f	class:TimeSus	access:public	signature:(uint32_t sec, uint32_t usec)
+TimeSus	server.cpp	/^class TimeSus$/;"	c	file:
+TimeSus::TimeSus	server.cpp	/^    TimeSus(uint32_t sec, uint32_t usec):tv_sec(sec), tv_usec(usec) {}$/;"	f	class:TimeSus	access:public	signature:(uint32_t sec, uint32_t usec)
+TimeSus::tv_sec	server.cpp	/^    uint32_t tv_sec;$/;"	m	class:TimeSus	file:	access:public
+TimeSus::tv_usec	server.cpp	/^    uint32_t tv_usec;$/;"	m	class:TimeSus	file:	access:public
+UDP_CONFIG_H	udp-config.h	2;"	d
+WallTimer	server.cpp	/^class WallTimer$/;"	c	file:
+WallTimer::getMsec	server.cpp	/^	static uint64_t getMsec()$/;"	f	class:WallTimer	access:public	signature:()
+WallTimer::getSec	server.cpp	/^	static uint64_t getSec()$/;"	f	class:WallTimer	access:public	signature:()
+WallTimer::getTimeDiffSec	server.cpp	/^	static uint32_t getTimeDiffSec(const TimeSus &first, const TimeSus &second)$/;"	f	class:WallTimer	access:public	signature:(const TimeSus &first, const TimeSus &second)
+WallTimer::getTimeDiffUsec	server.cpp	/^	static uint64_t getTimeDiffUsec(const TimeSus &first, const TimeSus &second)$/;"	f	class:WallTimer	access:public	signature:(const TimeSus &first, const TimeSus &second)
+WallTimer::getTimeSus	server.cpp	/^	static TimeSus getTimeSus()$/;"	f	class:WallTimer	access:public	signature:()
+WallTimer::get_usec	server.cpp	/^	static uint64_t get_usec()$/;"	f	class:WallTimer	access:public	signature:()
+WallTimer::makeTimeIntvStr	server.cpp	/^	static std::string makeTimeIntvStr(uint64_t usec1, uint64_t usec2)$/;"	f	class:WallTimer	access:public	signature:(uint64_t usec1, uint64_t usec2)
+WallTimer::testTimeDiffSec	server.cpp	/^	static bool testTimeDiffSec(const TimeSus &first, const TimeSus &second, uint32_t secs)$/;"	f	class:WallTimer	access:public	signature:(const TimeSus &first, const TimeSus &second, uint32_t secs)
+addBytes	server.cpp	/^    void addBytes(uint32_t flow, uint32_t nbytes)$/;"	f	class:BandwidthTracker	access:public	signature:(uint32_t flow, uint32_t nbytes)
+add_drop	server.cpp	/^    void add_drop(uint32_t flow, uint64_t usec, uint32_t nbytes)$/;"	f	class:BandwidthTracker	file:	access:private	signature:(uint32_t flow, uint64_t usec, uint32_t nbytes)
+bindUdp	server.cpp	/^	static void bindUdp(vector<int>::iterator it, uint32_t ip, uint16_t port)$/;"	f	class:SocketUtils	access:public	signature:(vector<int>::iterator it, uint32_t ip, uint16_t port)
+book_keeping	server.cpp	/^    void book_keeping()$/;"	f	class:BandwidthTracker	access:public	signature:()
+bwtracker	server.cpp	/^BandwidthTracker bwtracker;$/;"	v
+drops	server.cpp	/^    std::vector<DataDrop> drops;$/;"	m	class:BandwidthTracker	file:	access:private
+fire_usec	server.cpp	/^    uint64_t fire_usec;$/;"	m	class:BandwidthTracker	file:	access:private
+fired	server.cpp	/^    bool fired;$/;"	m	class:BandwidthTracker	file:	access:private
+flow_id	server.cpp	/^	uint32_t flow_id;$/;"	m	class:BandwidthTracker::DataDrop	file:	access:private
+getMsec	server.cpp	/^	static uint64_t getMsec()$/;"	f	class:WallTimer	access:public	signature:()
+getSec	server.cpp	/^	static uint64_t getSec()$/;"	f	class:WallTimer	access:public	signature:()
+getTimeDiffSec	server.cpp	/^	static uint32_t getTimeDiffSec(const TimeSus &first, const TimeSus &second)$/;"	f	class:WallTimer	access:public	signature:(const TimeSus &first, const TimeSus &second)
+getTimeDiffUsec	server.cpp	/^	static uint64_t getTimeDiffUsec(const TimeSus &first, const TimeSus &second)$/;"	f	class:WallTimer	access:public	signature:(const TimeSus &first, const TimeSus &second)
+getTimeSus	server.cpp	/^	static TimeSus getTimeSus()$/;"	f	class:WallTimer	access:public	signature:()
+get_avg_mbps_all	server.cpp	/^    double get_avg_mbps_all() const$/;"	f	class:BandwidthTracker	file:	access:private	signature:() const
+get_usec	server.cpp	/^	static uint64_t get_usec()$/;"	f	class:WallTimer	access:public	signature:()
+it	server.cpp	/^    std::vector<DataDrop>::iterator it;$/;"	m	class:BandwidthTracker	file:	access:private
+lock	server.cpp	/^    pthread_rwlock_t lock;$/;"	m	class:BandwidthTracker	file:	access:private
+lockread	server.cpp	/^    void lockread()$/;"	f	class:BandwidthTracker	file:	access:private	signature:()
+lockwrite	server.cpp	/^    void lockwrite()$/;"	f	class:BandwidthTracker	file:	access:private	signature:()
+main	client.cpp	/^int main()$/;"	f	signature:()
+main	server.cpp	/^int main(int argc, char* argv[])$/;"	f	signature:(int argc, char* argv[])
+makeTimeIntvStr	server.cpp	/^	static std::string makeTimeIntvStr(uint64_t usec1, uint64_t usec2)$/;"	f	class:WallTimer	access:public	signature:(uint64_t usec1, uint64_t usec2)
+monitorTraf	server.cpp	/^void *monitorTraf(void *arg)$/;"	f	signature:(void *arg)
+nbytes	server.cpp	/^	uint32_t nbytes;$/;"	m	class:BandwidthTracker::DataDrop	file:	access:private
+nbytes_flow	server.cpp	/^    std::vector<uint64_t>nbytes_flow;$/;"	m	class:BandwidthTracker	file:	access:private
+nbytes_flow_unrecorded	server.cpp	/^    std::vector<uint64_t>nbytes_flow_unrecorded;$/;"	m	class:BandwidthTracker	file:	access:private
+nbytes_total	server.cpp	/^    uint64_t nbytes_total;$/;"	m	class:BandwidthTracker	file:	access:private
+nflows	server.cpp	/^    uint32_t nflows;$/;"	m	class:BandwidthTracker	file:	access:private
+nrecs	server.cpp	/^    uint32_t nrecs; \/\/number of records currently kept$/;"	m	class:BandwidthTracker	file:	access:private
+nrecs_max	server.cpp	/^    uint32_t nrecs_max;$/;"	m	class:BandwidthTracker	file:	access:private
+record_usec	server.cpp	/^	uint64_t record_usec;$/;"	m	class:BandwidthTracker::DataDrop	file:	access:private
+report_info	server.cpp	/^    void report_info()$/;"	f	class:BandwidthTracker	access:public	signature:()
+sample_diff_sec	server.cpp	/^    uint32_t sample_diff_sec;$/;"	m	class:BandwidthTracker	file:	access:private
+set_paras	server.cpp	/^	void set_paras(uint32_t flow, uint64_t usec, uint32_t bytes)$/;"	f	class:BandwidthTracker::DataDrop	access:public	signature:(uint32_t flow, uint64_t usec, uint32_t bytes)
+shapeThread	server.cpp	/^pthread_t shapeThread;$/;"	v
+shape_data	server.cpp	/^void *shape_data(void *arg)$/;"	f	signature:(void *arg)
+start_timing	server.cpp	/^    void start_timing()$/;"	f	class:BandwidthTracker	file:	access:private	signature:()
+testTimeDiffSec	server.cpp	/^	static bool testTimeDiffSec(const TimeSus &first, const TimeSus &second, uint32_t secs)$/;"	f	class:WallTimer	access:public	signature:(const TimeSus &first, const TimeSus &second, uint32_t secs)
+trafThread	server.cpp	/^pthread_t trafThread;$/;"	v
+tv_sec	server.cpp	/^    uint32_t tv_sec;$/;"	m	class:TimeSus	file:	access:public
+tv_usec	server.cpp	/^    uint32_t tv_usec;$/;"	m	class:TimeSus	file:	access:public
+unlock	server.cpp	/^    void unlock()$/;"	f	class:BandwidthTracker	file:	access:private	signature:()
+update_usec	server.cpp	/^    uint64_t update_usec; \/\/time of last record keeping event$/;"	m	class:BandwidthTracker	file:	access:private
+~BandwidthTracker	server.cpp	/^    virtual ~BandwidthTracker() {}$/;"	f	class:BandwidthTracker	access:public	signature:()

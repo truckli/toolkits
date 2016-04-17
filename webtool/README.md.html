@@ -1,0 +1,44 @@
+<hr />
+
+<h2>Instructions:</h2>
+
+<h3>Data format:</h3>
+
+<ul>
+<li>format 1:</li>
+</ul>
+
+<p>The first line of the data file consists of  column names which will not reappear in other lines.
+From 2nd line to the last line is data lines.
+A data line is like this:</p>
+
+<blockquote>
+  <p>3    http://hi.baidu.com/lfzxk/item/c0001131d3789486c3cf2954 qid:1 2 5 7 8   </p>
+</blockquote>
+
+<p>In this case, features can be names like mOuterInlinkCount, mIsBadPage, etc ...</p>
+
+<ul>
+<li>format 2:</li>
+</ul>
+
+<p>Each feature value is preceded by a feature number. Feature numbers reveal nothing about the meaning of this feature.
+All lines are data lines like this:</p>
+
+<blockquote>
+  <p>3 qid:1 http://ios.d.cn/review/view-7683.html 1:0 2:0 3:0 4:0 5:0 6:0 7:0 8:0 9:0 10:0 ... </p>
+</blockquote>
+
+<p>In this case, features can be either a name (mOuterInlinkCount, mIsBadPage, etc) or a number (2, 5, etc) ...</p>
+
+<h3>Data file name:</h3>
+
+<p>It is an absoluate path in the server where this app is running. Default to be the very folder where this app is.</p>
+
+<h3>Caching:</h3>
+
+<p>If "Use no caching" checkbox is not checked, previous query result is returned without incurring time-consuming data analyzing.</p>
+
+<h3>How to modify this tool:</h3>
+
+<p>You can find the script behind this app with <strong>netstat</strong>, and modify the code. This app is written with <a href="http://www.tornadoweb.cn/">tornado</a>.</p>

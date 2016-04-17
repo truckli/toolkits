@@ -1,0 +1,11 @@
+ifconfig eth2 192.168.193.8
+ifconfig eth2:1 192.168.18.8
+ifconfig eth2:2 192.168.19.8
+ifconfig eth2:3 192.168.20.8
+ifconfig eth2:4 192.168.21.8
+ifconfig eth2:5 192.168.22.8
+ifconfig eth2:6 192.168.23.8
+ifconfig eth2:7 192.168.24.8
+ifconfig eth2:8 192.168.25.8
+ifconfig eth2:9 192.168.26.8
+ifconfig eth2:10 192.168.27.8

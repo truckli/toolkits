@@ -1,0 +1,21 @@
+mTitle_dupness
+mArticleTitle_dupness
+mcontent_dupness_window
+mcc_dupness_window
+manchor_dupness_window
+#上面这些特征的代码在：
+#10.99.16.73 /apsarapangu/disk5/chenziniu/fenyu_quality/antispam_inf/spam_detect/spam_detect/extractors/page_domain_feature_extractor.cpp
+mTitle_is_porn
+mTitle_is_game
+mTitle_is_lottory
+mSex_score
+mGame_field_score
+mPorns_field_score
+mLottory_field_score
+mVideo_field_score
+mTravel_field_score
+mMedical_field_score
+mLifeservice_field_score
+mLifepay_field_score
+mCar_field_score
+#10.99.16.73 /apsarapangu/disk5/chenziniu/fenyu_quality/antispam_inf/spam_detect/spam_detect/extractors/field_feature_extractor.cpp

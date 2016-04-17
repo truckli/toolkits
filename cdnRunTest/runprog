@@ -1,0 +1,30 @@
+#!/bin/bash
+
+binname="/home/limz/Projects/cxxCDN/cdn" 
+
+if [ "$1" = "start" ];then
+	${binname}  &
+fi
+
+if [ "$1" = "restart" ];then
+	killall $binname
+	${binname} &
+fi
+
+if [ "$1" = "stop" ];then
+	killall $binname
+fi
+
+
+if [ "$1" = "check" ];then
+	ps -ef |grep $binname|grep -v "grep" 
+fi
+
+if [ "$1" = "fill" ];then
+	java CDNClient
+fi
+
+if [ "$1" = "nohup" ];then
+	nohup ${binname} > /dev/null 2>&1 &
+fi
+
