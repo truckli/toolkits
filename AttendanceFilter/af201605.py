@@ -3,27 +3,31 @@
 
 
 import xlrd
+import sys
 from datetime import datetime 
 
-data = xlrd.open_workbook('2016.xls')
+data = xlrd.open_workbook('201605.xlsx')
 table = data.sheets()[0]
 nrows = table.nrows
 ncols = table.ncols
 summary = {}
 curno = None
-scandates = [4,5,6,7,8,11,12,13,14,15,18,19,20,21,22,25,26,27,28,29]
+scandates = [3,4,5,6,9,10,11,12,13,16,17,18,19,20,23,24,25,26]
 # 2015/12/31 => 42369
 for i in range(len(scandates)):
     scandates[i] += 42369
+
 print scandates
 
 namemap = {}
 
 for i in range(1, nrows):
     pname = table.cell(i, 1).value
-    pno = table.cell(i, 2).value
-    pdatetime = (table.cell(i, 3).value)
+    pno = pname 
+    pdatetime = (table.cell(i, 2).value)
     pdate = int(pdatetime)
+    print pdatetime, pdate
+    sys.exit(0)
     ptime = float(pdatetime) - pdate
     if pno != curno:
         curno = pno
