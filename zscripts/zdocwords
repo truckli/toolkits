@@ -1,0 +1,185 @@
+#!/bin/bash
+# ztools
+
+####################################################################
+# A pile of global variables, please edit them according to your purpose
+####################################################################
+
+cmdname="zdocwords";
+version="2012 alpha"
+#formula: cmdname options values parameters
+formula="$cmdname [option ] [word1[, word2,..]]";
+func="Select in current directory files that contain all words specified. Text, doc and odt file format supported";
+notice="Needs improvement. Only current directory searched"
+dependlist="dpkg, antiword, soffice"
+# Option names
+options="h v";
+loptions="help version"
+# Option value names. 0 for a no-value option.
+values="0 0";
+
+nonop=1
+
+
+# Option explanations. Separate each other with ${isep} sign.
+# Within each explanation content, use ${lsep} sign when ever you want to 
+# start a new line when printing.
+# A pair of doubly written signs results into a string with no special meaning
+# For instance, "${lsep}${lsep}" prints just one "${lsep}" instead of "\n"
+optexpl="Print help info\
+@zitem@Print version info";
+# Notice:options, values and optexpl must contain the same number of items.
+
+#Action when no argument is given
+# Need redefination.
+defaultop()
+{
+	echo "Please specify at least one word. Use -h option for help"
+	exit 1;
+}
+
+
+. libzutil.sh
+
+####################################################################
+#Procedure design. Unreusable part.
+####################################################################
+
+contain_words()
+{
+	local word
+	local num
+	item_found=1
+	for word in $paras
+	do
+		num=`grep -c "$word" $1`
+		if [ $num -eq 0 ]
+		then
+			item_found=0
+			break
+		fi
+	done
+}
+
+
+ismsdoc()
+{
+	mtchlen=`expr match "$1" '.*\.doc$'`
+}
+
+isodt()
+{
+	mtchlen=`expr match "$1" '.*\.odt$'`
+}
+
+
+searchdoc()
+{
+	local awname;
+	local mtchdoc;
+
+	awname=$1.antiword.tmp
+	antiword $1 > $awname
+
+	contain_words $awname
+	rm -rf $awname
+}
+
+searchodt()
+{
+	#awname=$1.antiword.tmp
+	#antiword $1 > $awname
+	local pos	
+	local nametruck
+	local xmlname
+	local mtchodt
+
+	trucklen=$(($mtchlen-4))	
+	nametruck=`expr substr $1 1 $trucklen`
+	xmlname=$nametruck.xml
+
+	[ ! -f $xmlname ] || rm -rf $xmlname
+
+	echo "Searching in $1. This might take some time......"
+	soffice --headless --convert-to xml $1 > /dev/null
+
+	if [ ! -r $xmlname ]
+	then
+		echo "Fail to generate an xml file. Neglect $1"
+		return
+	fi
+
+	#Remove xml tags
+	sed -i -e 's/<[^>]*>//g' $xmlname	
+
+	contain_words $xmlname
+	rm -rf $xmlname
+}
+
+
+####################################################################
+#Here we start the main program
+####################################################################
+
+
+if [ $on_h -eq 1 ]
+then
+	zusage
+fi
+
+if [ $on_v -eq 1 ]
+then
+	zversion
+fi
+
+
+#Check whether antiword and soffice are installed
+zcheck_install antiword
+zis_installed openoffice
+if [ $is_installed -eq 0 ]
+then
+	zcheck_install libreoffice 
+fi
+
+
+
+filelist=`find . -type f`
+
+
+for item in $filelist
+do
+	[ -r $item ] || continue
+	contain_words $item
+
+	if [ $item_found -eq 1 ]
+	then
+		echo "################# match found: $item"
+		continue
+	fi
+
+	ismsdoc $item
+	[ $mtchlen -eq 0 ] || searchdoc $item
+
+	if [ $item_found -eq 1 ]
+	then
+		echo "################# match found: $item"
+		continue
+	fi
+
+	isodt $item
+	[ $mtchlen -eq 0 ] || searchodt $item
+	
+	if [ $item_found -eq 1 ]
+	then
+		echo "################# match found: $item"
+		continue
+	fi
+
+done
+
+
+
+
+
+
+

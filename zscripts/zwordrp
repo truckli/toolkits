@@ -1,0 +1,237 @@
+#!/bin/sh
+# ztools
+
+####################################################################
+# A pile of global variables, please edit them according to your purpose
+####################################################################
+
+cmdname="zwordrp";
+version="2012 alpha"
+#formula: cmdname options values parameters
+formula="$cmdname -s searchword -p replaceword [-f filename]";
+func="Do word replace in file names as well as contents";
+notice="Regular expressions are not supported currently"
+# Option names
+options="s p f u v h";
+loptions="search replace file undo version help"
+# Option value names. 0 for a no-value option.
+values="searchword replaceword filename 0 0 0";
+# Enable no-option mode when nonop=1, when it is legal for zero option
+nonop=0;
+# Number of parameters taken 
+# minpara <= number of parameters <= maxpara
+minpara=0;
+maxpara=0;
+
+
+#item separator symbol
+isep="@zitem@"
+#line separator symbol, to require a newline when printing
+lsep="@zline@"
+
+# Option explanations. Separate each other with ${isep} sign.
+# Within each explanation content, use ${lsep} sign when ever you want to 
+# start a new line when printing.
+# A pair of doubly written signs results into a string with no special meaning
+# For instance, "${lsep}${lsep}" prints just one "${lsep}" instead of "\n"
+optexpl="Specify search word\
+@zitem@Specify replace word\
+@zitem@Specify file name\
+@zitem@Undo previous operation\
+@zitem@Print version info\
+@zitem@Print help info";
+# Notice:options, values and optexpl must contain the same number of items.
+
+#Action when no argument is given
+# Need redefination.
+defaultop()
+{
+	echo "Type $cmdname -h for help"
+	exit 1;
+}
+
+
+. libzutil.sh
+
+####################################################################
+#Procedure design. Unreusable part.
+####################################################################
+
+
+
+backup()
+{
+	[ -d .$cmdname ] || mkdir .$cmdname
+	backto=.$cmdname/data
+	[ -d $backto ] || mkdir $backto
+	echo "Backing up...."
+	[ -z "`ls`" ] || cp -rf * $backto
+	echo "Back up done"
+}
+
+restore()
+{
+	rstfrom=.$cmdname/data
+	if [ ! -d $rstfrom ]
+	then
+		echo "No backup data found! Exiting..."
+		exit 1;
+	fi
+
+	# For safety concerns, backup again current directory before restoring although not a must
+	backto=$rstfrom.tmp
+	[ -d $backto ] || mkdir $backto
+	[ -z "`ls`" ] || cp -rf * $backto
+
+	echo "Restoring ...."
+
+	rm -rf *
+	[ -z "`ls $rstfrom`" ] || cp -rf $rstfrom/* .
+	rm -rf $rstfrom
+	mv -f $backto $rstfrom
+	echo "Restore done."
+	ls
+}
+
+####################################################################
+#Here we start our main program
+####################################################################
+
+
+if [ $on_h -eq 1 ]
+then
+	zusage
+fi
+
+if [ $on_v -eq 1 ]
+then
+	zversion
+fi
+
+if [ $on_u -eq 1 ]
+then
+	restore
+	exit 1
+fi
+
+if [ $on_s -eq 0 ]
+then
+	echo "You need to specify search word"
+	exit 1
+fi
+
+if [ $on_p -eq 0 ]
+then
+	echo "You need to specify replace word"
+	exit 1
+fi
+
+
+if [ $on_f -eq 1 ]
+then
+	filelist=$value_f
+	if [ ! -w $value_f ]
+	then
+		echo "Specified file $value_f unwritable!"
+		exit 1
+	fi
+else
+	#filelist=`ls | grep "^[[:alnum:]]*"`
+	filelist=`find . -maxdepth 1 -type f `
+	dirlist=`find . -maxdepth 1 -type d `
+	if [ "$filelist" = "" -a "$dirlist" = "" ]
+	then
+		echo "Current directory is empty. No operation to perform"
+		exit 0
+	fi
+fi
+
+
+#Changed line count
+linecount=0;
+#Changed filename count
+fncount=0;
+#Changed directory name count
+dircount=0;
+
+#Backing up current state
+#backup
+
+for item in $filelist
+do
+	#Ingore ELF files
+	zfinfo_contain "$item" ".*ELF.*"
+	if [ $match_format -ne 0 ];then
+		continue
+	fi
+
+	lines=`grep -c "$value_s" $item`
+	if [ $lines -ne 0 ]
+	then
+		echo
+		echo "***********************************************************"
+		echo "In file $item, the following $lines lines are changed:"
+		grep "$value_s" $item
+		echo "***********************************************************"
+		linecount=$((${linecount}+${lines}))
+	fi
+	sed -i -e s/"$value_s"/"$value_p"/g $item
+	newname=`echo $item | sed -e s/$value_s/$value_p/g`
+	if [ "$newname" != "$item" ]
+	then
+		echo
+		echo "***********************************************************"
+		echo "File Name Changed: file $item renamed to $newname"
+		echo "***********************************************************"
+		mv $item $newname
+		fncount=$(($fncount+1))
+	fi
+done
+
+for item in $dirlist
+do
+	newname=`echo $item | sed -e s/$value_s/$value_p/g`
+	if [ "$newname" != "$item" ]
+	then
+		echo
+		echo "***********************************************************"
+		echo "Directory Name Changed: directory $item renamed to $newname"
+		echo "***********************************************************"
+		mv $item $newname
+		dircount=$(($dircount+1))
+	fi
+done
+
+echo "###################################### Statistics:"
+if [ $linecount -le 1 ]
+then
+	echo "$linecount line changed."
+else
+	echo "$linecount lines changed."
+fi
+
+if [ $fncount -le 1 ]
+then
+	echo "$fncount file name changed"
+else
+	echo "$fncount file names changed"
+fi
+
+if [ $dircount -le 1 ]
+then
+	echo "$dircount directory name changed"
+else
+	echo "$dircount directory names changed"
+fi
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,196 @@
+#!/bin/sh
+# ztools
+
+####################################################################
+# A pile of global variables, please edit them according to your purpose
+####################################################################
+
+cmdname="zconv";
+version="2012 alpha"
+#formula: cmdname options values parameters
+formula="$cmdname [option] [file1 [file2 [...]]]";
+func="Convert Windows .txt files in a directory to utf-8.";
+notice="For file or directory names containing spaces, use a double quotation"
+dependlist="enconv iconv"
+# Option names
+options="f d v h";
+loptions="file dir version help"
+# Option value names. 0 for a no-value option.
+values="0 dirname 0 0";
+# Enable no-option mode when nonop=1, when it is legal for zero option
+nonop=1;
+# Number of parameters taken 
+# minpara <= number of parameters <= maxpara
+minpara=0;
+maxpara=30
+
+
+#item separator symbol
+isep="@zitem@"
+#line separator symbol, to require a newline when printing
+lsep="@zline@"
+
+# Option explanations. Separate each other with ${isep} sign.
+# Within each explanation content, use ${lsep} sign when ever you want to 
+# start a new line when printing.
+# A pair of doubly written signs results into a string with no special meaning
+# For instance, "${lsep}${lsep}" prints just one "${lsep}" instead of "\n"
+optexpl="Specify files to convert from\
+@zitem@Specify directory\
+@zitem@Print version info\
+@zitem@Print help info";
+# Notice:options, values and optexpl must contain the same number of items.
+
+
+# Check format of a file specified by the first input arg
+# for utf encoded file, return 1
+# for ACSII file, return 2
+# or return 0
+file_enc_check()
+{
+	local match_1
+	local match_2
+	local exam_str
+
+	f_enc_result=0
+	exam_str=`file "$1"`
+	match_format=`expr match "$exam_str" '.*UTF.*'`
+	if [ $match_format -ne 0 ];then
+		f_enc_result=1
+		return
+	fi
+	match_format=`expr match "$exam_str" '.*utf.*'`
+	if [ $match_format -ne 0 ];then
+		f_enc_result=1
+		return
+	fi
+	match_format=`expr match "$exam_str" '.* ASCII .*'`
+	if [ $match_format -ne 0 ];then
+		f_enc_result=2
+		return
+	fi
+	match_format=`expr match "$exam_str" '.* ascii .*'`
+	if [ $match_format -ne 0 ];then
+		f_enc_result=2
+		return
+	fi
+}
+
+process_a_file()
+{
+	file=$1
+	if [ ! -r "$file" ];then
+			echo "Unable to read file $file"
+		fi
+
+		file_enc_check "$file"
+		if [ $f_enc_result -eq 1 ];then
+			echo "File $file is already utf encoded. Ignore"
+			return
+		fi
+
+		if [ $f_enc_result -eq 2 ];then
+			echo "File $file is an ASCII file. Ignore"
+			return
+		fi
+
+		echo "Processing file: "$file".................."
+		
+		#Try converting to to local encoding by enconv
+		enconv "$file" 2> /dev/null	
+		file_enc_check "$file"
+		if [ $f_enc_result -eq 1 ];then
+			echo "File $file is converted utf by enconv"
+			return
+		fi
+
+		fromgbk="$file".gbk2utf8;
+		iconv -f gbk -t utf8 "$file" -o "$fromgbk" -c 
+	echo "$file is converted to $fromgbk............."
+}
+
+do_the_job()
+{
+	if [ -z "$filelist" ];then
+		echo "No specified .txt files found"
+		exit 0
+	fi
+
+	local filen	
+	local i
+	local file
+
+	#number of txt files
+	filen=`echo "$filelist" |wc -l`
+	i=1
+
+	while [ $i -le $filen ]
+	do
+		file=`echo "$filelist" | sed -n "$i"p`
+		i=$(($i+1))
+		process_a_file "$file"
+	done
+}
+
+
+#Action when no argument is given
+# Need redefination.
+defaultop()
+{
+	filelist=`find . -maxdepth 1 -name "*\.txt"`;
+}
+
+
+. libzutil.sh
+
+####################################################################
+#Procedure design. Unreusable part.
+####################################################################
+####################################################################
+#Here we start our main program
+####################################################################
+
+
+if [ $on_h -eq 1 ]
+then
+	zusage
+fi
+
+if [ $on_v -eq 1 ]
+then
+	zversion
+fi
+
+
+if [ $on_d -eq 1 ]; then
+	if [ -z "$value_d" ]; then
+		echo "You did not specify any directory"
+		exit 1
+	fi
+	filelist=`find "$value_d" -maxdepth 1 -name "*\.txt"`
+	do_the_job
+	exit 0
+fi
+
+
+if [ $on_f -eq 1 ]
+then
+	if [ $parac -eq 0 ];then
+		echo "You did not specify any file"
+		exit 1
+	fi
+	i=1;
+
+	while [ $i -le $parac ]
+	do
+		eval file='$'para$i	
+		i=$(($i+1))
+		process_a_file "$file"
+	done
+	exit 0
+fi
+
+
+do_the_job
+
+

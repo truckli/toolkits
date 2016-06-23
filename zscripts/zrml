@@ -1,0 +1,140 @@
+#!/bin/sh
+# ztools
+
+
+####################################################################
+# A pile of global variables, please edit them according to your purpose
+####################################################################
+
+cmdname="zrml";
+version="2012 alpha"
+#formula: cmdname options values parameters
+formula="$cmdname options [filename]";
+func="Delete some lines from a file and echo the file";
+# Option names
+options="a b n h v";
+loptions="after before number help version";
+# Option value names. 0 for a no-value option.
+values="0 0 line# 0 0";
+# Enable no-option mode when nonop=1, when it is legal for zero option
+nonop=0;
+# Number of parameters taken 
+# minpara <= number of parameters <= maxpara
+minpara=0;
+maxpara=1;
+
+
+#item separator symbol
+isep="@zitem@"
+#line separator symbol, to require a newline when printing
+lsep="@zline@"
+
+# Option explanations. Separate each other with ${isep} sign.
+# Within each explanation content, use ${lsep} sign when ever you want to 
+# start a new line when printing.
+# A pair of doubly written signs results into a string with no special meaning
+# For instance, "${lsep}${lsep}" prints just one "${lsep}" instead of "\n"
+optexpl="Delete from after\
+@zitem@Delete from before(default)\
+@zitem@Denote line number of be deleted. Delete 1 line by default\
+@zitem@Print help info\
+@zitem@Print version info";
+# Notice:options, values and optexpl must contain the same number of items.
+
+. libzutil.sh
+
+####################################################################
+#Procedure design. Unreusable part.
+####################################################################
+
+
+
+
+
+
+
+####################################################################
+#Here we start the main program
+####################################################################
+
+
+if [ $on_h -eq 1 ]
+then
+	zusage;
+fi
+
+if [ $on_v -eq 1 ]
+then
+	zversion
+fi
+
+
+if [ $on_a -eq 1 -a $on_b -eq 1 ]
+then
+	echo "Option -a and -b cannot be both used."
+	exit 1;
+fi
+
+if [ $parac -eq 0 ]
+then
+	echo "No filename specified."
+	exit 1;
+fi
+
+if [ -w $para1 ]
+then
+	echo "File $para1 found......"
+	filename=$para1;
+else
+	echo "$para1 is not a writable file!"
+	exit 1;
+fi
+
+#Total lines in the file
+flc=`grep -c ".*" $filename`;
+if [ $flc -eq 0 ]
+then
+	echo "$filename is already empty."
+	exit 0
+fi
+
+#Delete Number
+if [ $on_n -eq 1 ]
+then
+	delc=$value_n;
+else
+	delc=1
+fi
+
+if [ $delc -ge $flc ]
+then
+	delc=$flc;
+fi
+
+if [ $on_b -eq 1 ]
+then
+	echo "Deleting from before......";
+	start=1;
+	end=$delc
+else
+	echo "Deleting from after......";
+	end=$flc;
+	start=$(($flc-$delc+1))
+fi
+
+tmpname=${filename}".tmp"
+sed -e ${start},${end}d $filename > $tmpname
+rm -f $filename;
+mv $tmpname $filename;
+
+sed = $filename | sed 'N;s/\n/\t/'
+
+
+flc=`grep -c ".*" $filename`;
+if [ $flc -eq 0 ]
+then
+	echo "$filename is trucated empty"
+fi
+
+
+

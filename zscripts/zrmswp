@@ -1,0 +1,89 @@
+#!/bin/sh
+# ztools
+#Remove swp files in current directory.
+
+####################################################################
+# A pile of global variables, please edit them according to your purpose
+####################################################################
+
+cmdname="zrmswp";
+version="2012 alpha"
+#formula: cmdname options values parameters
+formula="$cmdname [option]";
+func="Remove swp files in current directory."
+# Option names
+options="v h";
+loptions="version help"
+# Option value names. 0 for a no-value option.
+values="0 0";
+# Enable no-option mode when nonop=1, when it is legal for zero option
+nonop=1;
+# Number of parameters taken 
+# minpara <= number of parameters <= maxpara
+minpara=0;
+maxpara=0;
+
+
+#item separator symbol
+isep="@zitem@"
+#line separator symbol, to require a newline when printing
+lsep="@zline@"
+
+# Option explanations. Separate each other with ${isep} sign.
+# Within each explanation content, use ${lsep} sign when ever you want to 
+# start a new line when printing.
+# A pair of doubly written signs results into a string with no special meaning
+# For instance, "${lsep}${lsep}" prints just one "${lsep}" instead of "\n"
+optexpl="Print version info\
+@zitem@Print help info";
+# Notice:options, values and optexpl must contain the same number of items.
+
+#Action when no argument is given
+# Need redefination.
+defaultop()
+{
+	rmlist=`ls -a |grep [[:punct:]].*[[:punct:]]swp`
+	if [ -z $rmlist ]
+	then
+		echo "There is no .swp file in this directory"
+		exit 1;
+	else
+		echo $rmlist
+		for swpf in $rmlist
+		do
+			echo "Removing : $swpf  ......"
+		done
+	fi
+
+	rm -f .*swp
+	exit 0;
+}
+
+
+. libzutil.sh
+
+####################################################################
+#Procedure design. Unreusable part.
+####################################################################
+
+
+
+####################################################################
+#Here we start our main program
+####################################################################
+
+
+if [ $on_h -eq 1 ]
+then
+	zusage;
+fi
+
+if [ $on_v -eq 1 ]
+then
+	zversion
+fi
+
+
+
+
+

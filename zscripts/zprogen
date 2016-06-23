@@ -1,0 +1,190 @@
+#!/bin/bash
+# ztools
+
+####################################################################
+# A pile of global variables, please edit them according to your purpose
+####################################################################
+
+cmdname="zprogen";
+version="2012 alpha"
+#formula: cmdname options values parameters
+formula="$cmdname option [project_name]";
+func="A software development accelerator to create a helloworld source code with a makefile";
+# Option names
+options="c x j v h";
+loptions="c cpp java version help"
+# Option value names. 0 for a no-value option.
+values="cname cppname jname 0 0";
+# Enable no-option mode when nonop=1, when it is legal for zero option
+nonop=0;
+# Number of parameters taken 
+# minpara <= number of parameters <= maxpara
+minpara=0;
+maxpara=0;
+
+
+#item separator symbol
+isep="@zitem@"
+#line separator symbol, to require a newline when printing
+lsep="@zline@"
+
+# Option explanations. Separate each other with ${isep} sign.
+# Within each explanation content, use ${lsep} sign when ever you want to 
+# start a new line when printing.
+# A pair of doubly written signs results into a string with no special meaning
+# For instance, "${lsep}${lsep}" prints just one "${lsep}" instead of "\n"
+optexpl="Create a C project\
+@zitem@Create a C++ project\
+@zitem@Create a Java project\
+@zitem@Print version info\
+@zitem@Print help info";
+# Notice:options, values and optexpl must contain the same number of items.
+
+#Action when no argument is given
+# Need redefination.
+defaultop()
+{
+	exit 1;
+}
+
+
+. libzutil.sh
+
+####################################################################
+#Procedure design. Unreusable part.
+####################################################################
+
+
+mkwkspace()
+{
+	if [ $on_c -eq 1 ]
+	then
+		proname=$value_c
+		mainobj=z${proname}.o
+		mainname=z${proname}.c
+	elif [ $on_x -eq 1 ]
+	then
+		proname=$value_x
+		mainname=z${proname}.cpp
+	elif [ $on_j -eq 1 ]
+	then
+		proname=$value_j
+		mainname=${proname}.java
+	fi
+
+	if [ -d ${proname} ]
+	then
+		echo "Project with name ${proname} already exists in this directory."
+		exit 1
+	fi
+
+	mkdir ${proname};
+	cd ${proname};
+	touch $mainname;
+	touch makefile;
+}
+
+mkcpro()
+{
+	echo "#include <stdlib.h>" >> $mainname;
+	echo "#include <stdio.h>" >> $mainname;
+	echo "#include \"mz_macro.h\"" >> $mainname;
+	echo "" >> $mainname;
+	echo "int main(int argc, char* argv[])" >> $mainname;
+	echo "{" >> $mainname;
+	echo "" >> $mainname;
+	echo "	printf(\"This is a C program.\\n\");" >> $mainname;
+	echo "	return 0;" >> $mainname;
+	echo "}" >> $mainname;
+
+	echo "CC=gcc" >> makefile
+	echo "CFLAGS=-g -DZ_DEBUG_PRTVAR -I /media/D/Nutstore/Softwares/ztoolkit" >> makefile
+	echo "OBJS=$mainobj" >>makefile
+	echo "all:$proname" >>makefile
+	echo "$proname:\$(OBJS)" >>makefile
+	echo "	\$(CC) \$(CFLAGS) -o \$@ \$^" >>makefile
+	echo "*.o:*.c" >>makefile
+	echo "	\$(CC) \$(CFLAGS) -c $< ;" >> makefile;
+	echo "touch:" >>makefile
+	echo "	touch *.c;" >> makefile;
+	echo "clean:" >>makefile
+	echo "	rm -f *.o;" >> makefile;
+	echo "	rm $proname;" >> makefile;
+	echo "run:all" >>makefile
+	echo "	./$proname" >> makefile;
+	make
+	./$proname
+}
+
+mkxpro()
+{
+	echo "#include <iostream>" >> $mainname;
+	echo "#define Z_DEBUG_ON" >> $mainname;
+	echo "using namespace std;" >> $mainname;
+	echo "" >> $mainname;
+	echo "int main(int argc, char* argv[])" >> $mainname;
+	echo "{" >> $mainname;
+	echo "" >> $mainname;
+	echo "	cout<<\"This is a C++ program.\"<<endl;" >> $mainname;
+	echo "	return 0;" >> $mainname;
+	echo "}" >> $mainname;
+
+	echo "CC=g++" >> makefile
+	echo "${proname}:$mainname" >>makefile;
+	echo "	\$(CC) -o ${proname} $mainname ;" >> makefile;
+	make
+	./$proname
+}
+
+mkjpro()
+{
+	echo "public class $proname" >> $mainname;
+	echo "{" >> $mainname;
+	echo "	public static void main(String args[])" >> $mainname;
+	echo "		{" >> $mainname;
+	echo "			System.out.println(\"This is a Java program\");" >> $mainname;
+	echo "		}" >> $mainname;
+	echo "}" >> $mainname;
+
+	echo "${proname}.class:${proname}.java" >>makefile;
+	echo "	javac ${proname}.java" >> makefile;
+	make
+	java $proname	
+}
+
+
+####################################################################
+#Here we start our main program
+####################################################################
+
+
+if [ $on_h -eq 1 ]
+then
+	zusage;
+fi
+
+if [ $on_v -eq 1 ]
+then
+	zversion
+fi
+
+#create workspace
+mkwkspace
+
+if [ $on_c -eq 1 ]
+then
+	mkcpro
+elif [ $on_x -eq 1 ]
+then
+	mkxpro
+elif [ $on_j -eq 1 ]
+then
+	mkjpro
+fi
+
+
+
+
+
+
+

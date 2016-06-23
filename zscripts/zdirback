@@ -1,0 +1,138 @@
+#!/bin/bash
+# ztools
+
+####################################################################
+# A pile of global variables, please edit them according to your purpose
+####################################################################
+
+cmdname="zdirback";
+version="2012 alpha"
+#formula: cmdname options values parameters
+formula="$cmdname [option]";
+func="Back up or restore current directory";
+notice="A restore operation deletes last backup data and backs up state before this restore"
+# Option names
+options="b r c v h";
+loptions="backup restore clear version help"
+# Option value names. 0 for a no-value option.
+values="0 0 0 0 0";
+# Enable no-option mode when nonop=1, when it is legal for zero option
+nonop=0;
+# Number of parameters taken 
+# minpara <= number of parameters <= maxpara
+minpara=0;
+maxpara=0;
+
+
+#item separator symbol
+isep="@zitem@"
+#line separator symbol, to require a newline when printing
+lsep="@zline@"
+
+# Option explanations. Separate each other with ${isep} sign.
+# Within each explanation content, use ${lsep} sign when ever you want to 
+# start a new line when printing.
+# A pair of doubly written signs results into a string with no special meaning
+# For instance, "${lsep}${lsep}" prints just one "${lsep}" instead of "\n"
+optexpl="Back up current directory\
+@zitem@Restore current directory\
+@zitem@Clear backup data\
+@zitem@Print version info\
+@zitem@Print help info";
+# Notice:options, values and optexpl must contain the same number of items.
+
+#Action when no argument is given
+# Need redefination.
+defaultop()
+{
+	echo "Type $cmdname -h for help"
+	exit 1;
+}
+
+
+. libzutil.sh
+
+####################################################################
+#Procedure design. Unreusable part.
+####################################################################
+
+backup()
+{
+	[ -d .$cmdname ] || mkdir .$cmdname
+	backto=.$cmdname/data	
+	[ -d $backto ] || mkdir $backto
+	echo "Backing up...."
+	[ -z "`ls`" ] || cp -rf * $backto
+	echo "Back up done"
+}
+
+restore()
+{
+	rstfrom=.$cmdname/data	
+	if [ ! -d $rstfrom ]
+	then
+		echo "No backup data found! Exiting..."
+		exit 1;
+	fi
+
+	# For safety concerns, backup again current directory before restoring although not a must
+	backto=$rstfrom.tmp
+	[ -d $backto ] || mkdir $backto
+	[ -z "`ls`" ] || cp -rf * $backto
+
+	echo "Restoring ...."
+	
+	rm -rf *
+	[ -z "`ls $rstfrom`" ] || cp -rf $rstfrom/* .
+	rm -rf $rstfrom
+	mv -f $backto $rstfrom
+	echo "Restore done."
+	ls
+}
+
+cleardata()
+{
+	rstfrom=.$cmdname/data	
+	if [ ! -d $rstfrom ]
+	then
+		echo "No backup data found! Exiting..."
+		exit 1;
+	else
+		echo "Clearing data...."
+		rm -rf $rstfrom
+		echo "Backup data cleared"
+		exit 1
+	fi
+}
+
+####################################################################
+#Here we start our main program
+####################################################################
+
+
+if [ $on_h -eq 1 ]
+then
+	zusage
+fi
+
+if [ $on_v -eq 1 ]
+then
+	zversion
+fi
+
+if [ $on_c -eq 1 ]
+then
+	cleardata
+fi
+
+if [ $on_b -eq 1 ]
+then
+	backup
+fi
+
+if [ $on_r -eq 1 ]
+then
+	restore
+	exit 0
+fi
+

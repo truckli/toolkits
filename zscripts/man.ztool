@@ -1,0 +1,87 @@
+
+
+libzutil.sh
+
+依赖的变量:
+cmdname
+func
+options
+loptions
+values
+optexpl
+依赖的变量(optional)
+notice
+formula
+version
+dependlist
+isep
+lsep
+minpara
+maxpara
+nonop
+
+依赖的函数:
+defaultop:当允许无任何argument时(nonop=1, minpara=0),用户未输入任何argument时程序的行为
+
+依赖的软件包和命令
+dpkg
+file
+
+作用:
+自动生成help函数
+检查参数设计,数目匹配
+参数解析
+提供一些实用函数工具
+
+产生的全局变量包括:
+on数组,如on_h, on_v
+value数组,如value_h, value_v
+parac, 表示参数个数
+paras,参数列表
+para1,para2,...表示各个参数
+
+提供函数:
+prtparse
+打印argument分析结果
+prtarg
+打印任意变量的值
+zusage
+打印帮助信息
+zversion
+打印版本信息
+zprtvar
+打印任意变量的值,实际上,zprtvar就是对prtarg的简单封装
+zprtfunc
+打印功能信息
+zcheck_install zis_installed
+检查依赖的软件是否安装
+zfinfo_contain
+检查文件信息（file命令给出）是否包含指定正则表达式
+
+
+下一步工作
+
+升级库的工作：
+func要支持断行
+要自动检查依赖软件，并请示是否安装或绕开某些步骤
+命令行参数要支持 longopt=value 形式
+#!ztools  可以放置在任意行
+paras参数组要支持带空格的参数
+
+zconv:
+需要将gbk2utf文件迅速更名为txt文件
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,115 @@
+#!/bin/bash
+# ztools
+
+####################################################################
+# A pile of global variables, please edit them according to your purpose
+####################################################################
+
+cmdname="zssh";
+version="2012 alpha"
+#formula: cmdname options values parameters
+formula="$cmdname [option] [keyword]";
+func="Ssh to work server";
+notice="Needs improvement. Only drm and mcos supported"
+# Option names
+options="h v";
+loptions="help version"
+# Option value names. 0 for a no-value option.
+values="0 0";
+
+nonop=1
+
+
+# Option explanations. Separate each other with ${isep} sign.
+# Within each explanation content, use ${lsep} sign when ever you want to 
+# start a new line when printing.
+# A pair of doubly written signs results into a string with no special meaning
+# For instance, "${lsep}${lsep}" prints just one "${lsep}" instead of "\n"
+optexpl="Print help info\
+@zitem@Print version info";
+# Notice:options, values and optexpl must contain the same number of items.
+
+#Action when no argument is given
+# Need redefination.
+defaultop()
+{
+	echo "Please specify at least one word. Use -h option for help"
+	exit 1;
+}
+
+
+. libzutil.sh
+
+####################################################################
+#Procedure design. Unreusable part.
+####################################################################
+
+
+#!/bin/sh
+# ztools
+
+server194="192.168.190.8"
+
+if [ $para1 = "A"  ];then
+        sshpass -p minicom ssh minicomA@${server194}
+fi
+
+if [ $para1 = "B"  ];then
+        sshpass -p minicom ssh minicomB@${server194}
+fi
+
+if [ $para1 = "A2"  ];then
+        sshpass -p minicom ssh minicomA2@${server194}
+fi
+
+if [ $para1 = "B2"  ];then
+        sshpass -p minicom ssh minicomB2@${server194}
+fi
+
+if [ $para1 = "publicdrm"  ];then
+	echo Logging in DRM public 210.75.225.108.....	
+	sshpass -p lmz ssh limz@210.75.225.108
+fi
+
+if [ $para1 = "50"  ];then
+	sshpass -p dspcmp ssh root@192.168.130.50
+fi
+
+if [ $para1 = "drm" ];then
+	echo Logging in 192.168.130.130.....	
+	sshpass -p lmz ssh limz@192.168.130.130
+fi
+
+if [ $para1 = "boss" ];then
+	echo Logging in 192.168.8.16.....	
+	sshpass -p dspboss ssh root@192.168.8.16
+fi
+
+if [ $para1 = "root194" ];then
+	sshpass -p zhongxinceshi ssh root@${server194}
+fi
+
+if [ $para1 = "7220" ];then
+	echo Logging in Radisys ATCA-7220.....	
+	telnet 10.0.0.1
+fi
+
+if [ $para1 = "rootdrm"  ];then
+	echo Logging in DRM public 192.168.130.130.....	
+	sshpass -p dspdrm_root ssh root@192.168.130.130
+fi
+
+if [ $para1 = "194" ];then
+        sshpass -p lmz ssh limz@${server194}
+fi
+
+if [ $para1 = "131" ];then
+	echo Logging in 192.168.130.131.....	
+	sshpass -p limz ssh limz@192.168.130.131
+fi
+
+if [ $para1 = "test" ];then
+	echo Logging in 192.168.190.7.....	
+	sshpass -p 123456 ssh root@192.168.190.7
+fi
+

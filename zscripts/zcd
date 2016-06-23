@@ -1,0 +1,104 @@
+#!/bin/bash
+# ztools
+
+####################################################################
+# A pile of global variables, please edit them according to your purpose
+####################################################################
+
+cmdname="zcd";
+version="2012 alpha"
+#formula: cmdname options values parameters
+formula="Just as cd command";
+func="cd and ls";
+#dependlist=""
+# Option names
+options="h v";
+loptions="help version"
+# Option value names. 0 for a no-value option.
+values="0 0";
+
+maxpara=1
+
+# Option explanations. Separate each other with ${isep} sign.
+# Within each explanation content, use ${lsep} sign when ever you want to 
+# start a new line when printing.
+# A pair of doubly written signs results into a string with no special meaning
+# For instance, "${lsep}${lsep}" prints just one "${lsep}" instead of "\n"
+optexpl="Print help info\
+@zitem@Print version info";
+# Notice:options, values and optexpl must contain the same number of items.
+
+#Action when no argument is given
+# Need redefination.
+defaultop()
+{
+    cd ~
+    ls
+}
+
+
+. libzutil.sh
+
+####################################################################
+#Procedure design. Unreusable part.
+####################################################################
+
+just_help()
+{
+    if [ "$formula" != "" ]
+    then
+	echo "Usage: $formula"
+    fi
+
+    echo "Function: $func"
+
+    if [ $optc -gt 0 ]
+    then
+	echo Options:;
+    fi
+
+    ii=1;
+    while [ ${ii} -le ${optc} ]
+    do
+	getop ${ii}
+	getva ${ii}
+	getlongop $ii
+	op="-$op"
+	longop="--$longop"
+	printf "\t%-6s%-20s%-10s"	"${op}" "${longop}" "${va}" 
+	prtoel ${ii}
+	ii=$((${ii}+1))
+    done
+
+    if [ "$version" != "" ]
+    then
+	echo "Version: $version"
+    fi
+
+    if [ "$notice" != "" ]
+    then
+	echo "Notice: $notice"
+    fi
+
+    if [ "$dependlist" != "" ]
+    then
+	echo "Depend softwares: $dependlist"
+    fi
+}
+
+
+if [ $on_h -eq 1 ];then
+    just_help
+elif [ $on_v -eq 1 ];then
+    echo "Version : $version"
+elif [ "$1" != "" ];then
+    cd $1
+    ls
+fi
+
+
+
+
+
+
+

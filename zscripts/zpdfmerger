@@ -1,0 +1,112 @@
+#!/bin/bash
+# ztools
+
+####################################################################
+# A pile of global variables, please edit them according to your purpose
+####################################################################
+
+cmdname="zpdfmerger";
+version="2012 alpha"
+#formula: cmdname options values parameters
+formula="$cmdname option [input]";
+func="Merge PDF files specified or in current directory";
+# Option names
+options="o v h";
+loptions="output version help"
+# Option value names. 0 for a no-value option.
+values="file 0 0";
+# Enable no-option mode when nonop=1, when it is legal for zero option
+nonop=1;
+# Number of parameters taken 
+# minpara <= number of parameters <= maxpara
+minpara=0;
+maxpara=30;
+
+
+#item separator symbol
+isep="@zitem@"
+#line separator symbol, to require a newline when printing
+lsep="@zline@"
+
+# Option explanations. Separate each other with ${isep} sign.
+# Within each explanation content, use ${lsep} sign when ever you want to 
+# start a new line when printing.
+# A pair of doubly written signs results into a string with no special meaning
+# For instance, "${lsep}${lsep}" prints just one "${lsep}" instead of "\n"
+optexpl="Specify output file name\
+@zitem@Print version info\
+@zitem@Print help info";
+# Notice:options, values and optexpl must contain the same number of items.
+
+#Action when no argument is given
+# Need redefination.
+defaultop()
+{
+	echo "Type $cmdname -h for help"
+	exit 1;
+}
+
+
+. libzutil.sh
+
+####################################################################
+#Procedure design. Unreusable part.
+####################################################################
+
+
+
+####################################################################
+#Here we start our main program
+####################################################################
+
+
+if [ $on_h -eq 1 ]
+then
+	zusage
+fi
+
+if [ $on_v -eq 1 ]
+then
+	zversion
+fi
+
+#Check wheter pdftk and gs are installed
+zcheck_install pdftk
+zcheck_install ghostscript-x
+
+if [ $on_o -eq 0 ]
+then
+	echo "You need to specify an output file name using -o option"
+	exit 0
+fi
+
+outpdf=$value_o
+outtmp=${outpdf}.tmp
+inpdf="";
+
+
+if [ -f $outpdf ]
+then
+	echo "You already have a $outpdf file in this directory"
+	echo "You can move it or specify another output file name"
+	exit 1
+fi
+
+
+if [ $parac -gt 0 ]
+then
+	inpdf=$*;
+	inpdf=`echo $inpdf | sed -e s/${outpdf}//g`
+	inpdf=`echo $inpdf | sed -e s/-o//g`
+else
+	inpdf="*.pdf"
+fi
+
+gs -q -dNOPAUSE -sDEVICE=pdfwrite -sOUTPUTFILE=$outtmp -dBATCH *.pdf
+
+mv $outtmp $outpdf
+echo "Merging done. Check outputfile $outpdf "
+
+
+
+

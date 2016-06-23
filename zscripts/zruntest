@@ -1,0 +1,23 @@
+#!/bin/sh
+
+#compile and run a cpp program or run a python script
+
+[ -f $1 ] || exit 0
+
+
+if [ `expr match "$1" '.*cpp$'` != "0" ]
+then
+    g++ $1 -o tmp
+    shift
+    ./tmp $*
+    rm tmp
+fi
+
+
+if [ `expr match "$1" '.*py$'` != "0" ]
+then
+    python $1
+fi
+
+
+

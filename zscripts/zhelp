@@ -1,0 +1,53 @@
+#!/bin/sh
+
+cmdname="zhelp"
+func="List ztools utilities info, if any found in current directory"
+
+
+if [ $# -ge 1 ]
+then
+	if [ "$1" = "-h" ]
+	then
+		echo "***********************************************"
+		echo "Tool name: $cmdname"
+		echo "Function: $func"
+		echo "***********************************************"
+		exit 0;
+	fi
+fi
+
+
+
+filelist=`ls |grep "z.*"`
+if [ "$filelist" = "" ]
+then
+	echo "There is no ztool utility in current directory"
+	exit 1
+fi
+
+ztoollist="";
+
+for item in $filelist
+do
+	headline=`sed -n 2p $item`
+	if [ $item != $cmdname -a "$headline" = "# ztools" ]
+	then
+		ztoollist=${ztoollist}" "${item}
+	fi
+done
+
+if [ "$ztoollist" != "" ]
+then
+	echo "*************************** Tool list:"
+else
+	echo "There is no ztool utility in current directory"
+	exit 1
+fi
+
+count=1;
+for item in $ztoollist
+do
+	echo -n "****** [ No.$count ] : "
+	$item --prtfunc
+	count=$(($count+1))
+done

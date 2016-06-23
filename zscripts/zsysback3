@@ -1,0 +1,32 @@
+#!/bin/bash
+# ztools
+# a2system  Backs up or recover all files in / directory
+# update:     06/08/2005
+
+cmdname="zsysback"
+func="Back up Linux system"
+
+
+if [ "$#" = 0 ]; then
+	echo "使用方法:"
+	echo "        1)sudo ./$(basename "$0") filename backup  用于备份系统"
+	echo "        2)sudo ./$(basename "$0") filename recover 用于恢复系统"
+	exit 1
+fi
+
+if [ "$1" = "--prtfunc" ]
+then
+	echo "${cmdname}: ${func}"
+	exit 0
+fi
+
+if [ "$2" = "backup" ];
+then
+	aptitude clean
+	tar jcvfp /media/E/"$1".tar.bz2 / --exclude=/proc --exclude=/lost+found --exclude=/mnt --exclude=/sys --exclude=/windows --exclude=/media --exclude=/tmp --exclude=/run --exclude=/var
+elif [ "$2" = "recover" ];
+then
+	tar jxvfp "$1" -C /media/0a35955e-6fe7-4441-9da6-fe46bb1856ec
+else
+	echo "请确认你输入的第二个命令行参数是否正确！"
+fi

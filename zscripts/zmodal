@@ -1,0 +1,364 @@
+#!/bin/sh
+
+
+####################################################################
+# A pile of global variables, please edit them according to your purpose
+####################################################################
+
+cmdname="zmodal";
+#formula: cmdname options values parameters
+formula="$cmdname [Options] [Values] [Parameters]";
+func="A software development demonstration";
+# Option names
+options="-a -b -h";
+# Option value names. 0 for a no-value option.
+values="av bv 0";
+# Enable no-option mode when nonop=1, when it is legal for zero option
+nonop=1;
+# Number of parameters taken 
+# minpara <= number of parameters <= maxpara
+minpara=0;
+maxpara=9;
+
+
+#item separator symbol
+isep="@zitem@"
+#line separator symbol, to require a newline when printing
+lsep="@zline@"
+
+# Option explanations. Separate each other with ${isep} sign.
+# Within each explanation content, use ${lsep} sign when ever you want to 
+# start a new line when printing.
+# A pair of doubly written signs results into a string with no special meaning
+# For instance, "${lsep}${lsep}" prints just one "${lsep}" instead of "\n"
+optexpl="oel1\
+@zitem@oel2\
+@zitem@Print help info";
+# Notice:options, values and optexpl must contain the same number of items.
+
+
+
+
+####################################################################
+# A pile of tool functions. Reusable except defaultop() function.
+####################################################################
+
+# Print argument values for debugging use.
+# e.g., to print values of var, type: prtarg var,
+# which equals to: echo "var = $var".
+prtarg()
+{
+	if [ -z $1 ]
+	then
+		echo "printarg() function usage error"
+		exit 1;
+	fi
+	echo -n "$1 = "
+	eval v='$'$1;
+	echo "$v";
+}
+
+# Get and print option explanation info by index.
+# e.g., to get the explanation for the 2nd option,type " prtoel 2".
+# The explanation value will be given to echo,
+# as well as stored in a global variable called oel.
+prtoel()
+{
+	id=$1;
+	oelt=$optexpl;
+
+	while [ $id -gt 0 ]
+	do
+		oel=${oelt%%${isep}*}
+		oelt=${oelt#*${isep}}	
+		conti=`expr substr "$oelt" 1 ${#isep}`
+		while [ "$conti" = "$isep" ]
+		do
+			oel=${oel}"${isep}";
+			oelt=${oelt#*${isep}}	
+			oel=${oel}${oelt%%${isep}*}
+			oelt=${oelt#*${isep}}	
+			conti=`expr substr "$oelt" 1 ${#isep}`
+		done
+		id=$((${id}-1))
+	done
+
+	#Now oel stores the option explanation value
+	#Print oel line by line, separated by a single "${lsep}" sign
+	lineno=0
+	oelt=$oel
+	while [ ${#oelt} -ne 0 ]
+	do
+		brkc=`expr match "$oelt" .*${lsep}`
+		if [ $brkc -eq 0 ] #One-line oel without ${lsep} symbol
+		then
+			if [ $lineno -ne 0 ]
+			then
+				echo -n "                                 "
+			fi
+			echo "$oelt"
+			break
+		fi	
+
+        line=${oelt%%${lsep}*}
+	    oelt=${oelt#*${lsep}}
+		lineno=$(($lineno+1))
+		conti=`expr substr "$oelt" 1 ${#lsep}`
+		while [ "$conti" = "${lsep}" ]
+		do
+			line=${line}"${lsep}";
+			oelt=${oelt#*${lsep}}	
+			line=${line}${oelt%%${lsep}*}
+			oelt=${oelt#*${lsep}}	
+			conti=`expr substr "$oelt" 1 ${#lsep}`
+	   done
+
+	   if [ $lineno -ne 1 ]
+	   then
+		   echo -n "                                 "
+	   fi
+	   echo "$line"
+   done
+}
+
+# Do programming checks:
+# the number of option names, values, and explanations must be equal
+# to each other
+checkopt()
+{
+	optc=`echo ${options} | wc -w`; #Num of option names
+	valc=`echo ${values} | wc -w`; #Num of option values
+	oelc=0; #Num of option explanations. Waiting to be computed.
+	oelt="$optexpl";
+	
+	while [ ${#oelt} -ne 0 ]
+	do
+		oelc=$(($oelc+1))
+		brkc=`expr match "$oelt" .*${isep}`
+		if [ $brkc -eq 0 ] #oelt no longer containes ${isep}
+		then
+			break;
+		fi
+		oelt=${oelt#*${isep}}	
+		conti=`expr substr "$oelt" 1 ${#isep}`
+		while [ "$conti" = ${isep} ] #oelt starts with ${isep} after trucating "*${isep}" pattern
+		do
+			#a double ${isep} is not interpreted as ${isep} at all	
+			oelt=${oelt#*${isep}}	
+			oelt=${oelt#*${isep}}	
+			conti=`expr substr "$oelt" 1 ${#isep}`
+		done
+	done
+
+	if [ $optc != $valc -o $optc != $oelc ]
+	then
+		echo Programming error. Please check number of options.
+		exit 1;
+	fi
+}
+
+#A function to parse a line into words.
+#Usage: getword index line
+# index denotes the positon, and the function stores
+# the corresponding word into a variable called word
+getword()
+{
+	if [ $# -lt 2 ]
+	then
+			echo getword function usage error.;
+			exit 1;
+	fi
+
+	local id;
+	eval id='$'$(($1+1))
+	word=${id}
+}
+
+#A function to get an option name by index, and store it in op
+getop()
+{
+	getword $1 ${options};
+	op=${word};
+}
+
+#A function to get an option value by index, and store it in va
+getva()
+{
+	getword $1 ${values};
+	va=${word};
+	if [ ${va} = "0" ]
+	then
+		va="";
+	fi
+}	
+
+
+
+# Print help info and exit
+zusage()
+{
+	echo Tool name: ${cmdname};
+	echo Usage: ${formula};
+	echo Function: ${func};
+	echo Options:;
+
+	ii=1;
+	while [ ${ii} -le ${optc} ]
+	do
+		getop ${ii}
+		getva ${ii}
+		printf "\t%-5s%-20s"	"${op}" "${va}" 
+		prtoel ${ii}
+		ii=$((${ii}+1))
+	done
+	exit 1;
+}
+
+#Action when no argument is given
+# Need redefination.
+defaultop()
+{
+	echo Default operation.
+}
+
+#A function only used inside function zparse_arg() to parse a single argument
+get_opt()
+{
+	ii=1;
+	while [ $ii -le $optc ]
+	do
+		getop $ii; 
+		if [ "$op" = "$carg" ] #option matched	
+		then
+			getva $ii;
+			if [ "$va" != "" ] # this option requires a value
+			then
+				if [ "$nxtarg" = "" ] #this option gets no value
+				then
+					echo "Option $carg: Missing value"
+					echo "Type $cmdname -h for help"
+					exit 1;
+				fi
+				eval value$ii=$nxtarg;
+				curind=$(($curind+1));
+			fi
+			eval on$ii=1;
+			break;
+		fi
+		ii=$(($ii+1));
+	done
+
+	if [ $ii -gt $optc ] #No option match found. carg has to be a parameter
+	then
+		parac=$(($parac+1));
+		eval para$parac=$carg;
+	fi
+	curind=$(($curind+1));
+}
+
+
+#Function:Parse user-input arguments
+#Input:almost all the global variables
+#Outpus:on[] array, value[] array, para[] array, parac
+#Fisrt reset the on[] and value[] array to zeros, and later
+# set the corrisponding array item according to parsed arguments.
+# on[] item set to 1 if corresponding user option is detected
+# value[] item is set to corresponding option value
+# For detected parameter, write to para[] array and counts them into parac
+#NOTICE: dash shell does not support array, so use on1, on2...instead of on[1], on[2]
+zparse_arg()
+{
+	if [ $# -eq 0 ]
+	then
+		if [ $nonop != "1" ] # No-opt mode not enabled		
+		then
+			echo "No option given";
+			echo "Type $cmdname -h for help"
+			exit 1;
+		fi
+		if [ $minpara -gt 0 ] # A value required.
+		then
+			echo "No value given";
+			echo "Type $cmdname -h for help"
+			exit 1;
+		else
+			defaultop;
+		fi
+	fi # if [ $# -eq 0 ]
+
+	#Number of parameters currently recognized
+	parac=0;
+	#Current index of arguments being parsed
+	curind=1;
+	
+	#Intitialize on[] and value[] array to zeros.
+	jj=1;
+	while [ $jj -le $optc ]
+	do
+		eval on$jj=0;
+		eval value$jj=0;
+		jj=$(($jj+1))
+	done
+
+	while [ $curind -le $# ]
+	do
+		eval carg='$'$curind #carg=argv[curind]
+		nxtind=$(($curind+1))
+		if [ $nxtind -lt $# ]
+		then
+			eval nxtarg='$'$nxtind;
+		else
+			nxtarg="";
+		fi
+		get_opt
+	done
+
+	if [ $parac -lt $minpara -o $parac -gt $maxpara ]
+	then
+		echo "Number of parameters($parac) out of range([$minpara, $maxpara])."
+		exit 1;
+	fi
+
+}
+
+####################################################################
+#Procedure design. Unreusable part.
+####################################################################
+
+proc1()
+{
+	echo proc1;
+}
+
+proc2()
+{
+	echo proc2;
+}
+
+
+
+
+
+
+
+####################################################################
+#Here we start the main program
+####################################################################
+
+#Check for programming error
+checkopt; 
+#Parse arguments
+zparse_arg $*;
+
+#########Add your own code below to call your procedures based on on[], value[] and para[]
+
+if [ $on3 -eq 1 ]
+then
+	zusage;
+fi
+
+proc1
+proc2
+
+
+
