@@ -1,2 +1,0 @@
-reorder_label_train_merge_5feature.final.fad datafile
-loga-reorder_label_train_merge_5feature.final.fad datafile in logarithm scale
